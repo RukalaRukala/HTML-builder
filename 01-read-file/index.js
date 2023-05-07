@@ -1,8 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-let stream = fs.createReadStream(path.resolve('./01-read-file/text.txt'));
+const stream = new fs.ReadStream(path.resolve('./01-read-file/text.txt'), {encoding: 'utf-8'});
 
-stream.on('data', function(chunk) {
-  console.log(chunk.toString());
+stream.on('readable', () => {
+  let data = stream.read();
+  if(data != null)console.log(data);
 });
+
+stream.on('end', () => {});
 
