@@ -12,7 +12,10 @@ const messenges = ['Отлично! Добавил! Что-то ещё?',
                   'Тебе бы романы писать)) Ещё строчечку?',
                   'Чуть помедленнее...Я записываю...'];
 
-console.log('Привет! Готов содать новый файл и поместить туда твой текст. Для записи строки жди ENTER. ВВЕДИ ТЕКСТ (для остановки нажми Ctrl+C или введи "exit" на отдельной строке):')
+console.log();
+console.log('ПРИВЕТ! Готов содать новый файл и поместить туда твой текст.');
+console.log('ВВЕДИ ТЕКСТ (для остановки Ctrl+C или "exit"):');
+console.log();
 fs.writeFile('02-write-file/NewFile.txt', '', () => {});
 readline.prompt();
 readline.on('line', function(cmd) {
@@ -23,7 +26,9 @@ readline.on('line', function(cmd) {
     }
   fs.appendFile('02-write-file/NewFile.txt', cmd + '\n', () => {
     let rand = Math.floor(Math.random() * messenges.length);
+    console.log();
     console.log(messenges[rand]);
+    console.log();
   });
 });
 
