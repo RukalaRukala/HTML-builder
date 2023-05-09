@@ -37,38 +37,42 @@ fs.readdir(stylesFolder, (err, data) => {
   });
 });
 
-async function copyDir(path, where) {
+async function copyAssets(path, where) {
   const data = await fs.promises.readdir(path, {withFileTypes:true});
   await fs.promises.mkdir(where, {recursive: true}, (err) => { if (err) throw err; });
   data.forEach(dirent => {
     if (dirent.isFile()) {
       fs.promises.copyFile(`${path}/${dirent.name}`,`${where}/${dirent.name}`);
     } else if (dirent.isDirectory()) {
-      copyDir(`${path}/${dirent.name}`,`${where}/${dirent.name}`);
+      copyAssets(`${path}/${dirent.name}`,`${where}/${dirent.name}`);
     }
   });
 }
 
-copyDir('06-build-page/assets', '06-build-page/project-dist/assets');
+copyAssets('06-build-page/assets', '06-build-page/project-dist/assets');
 
-async function func1() {
+async function completeIndex() {
 
   rowsTemplate = (await fs.promises.readFile('06-build-page/template.html', 'utf-8', (data) => {})).split('\n');
   let compFiles = {};
 
   for (let i = 0; i < rowsTemplate.length; i += 1) {
     if (rowsTemplate[i].includes('{{')) {
-      compFiles[rowsTemplate[i].slice(rowsTemplate[i].indexOf('{') + 2, -3) + '.html'] = '';
+      rowsTemplate[i] = rowsTemplate[i].trim().split(' ');
+      await rowsTemplate[i].forEach(teg => {return teg.trim() + '\n'});
     }
   }
 
-  for (let file in compFiles) {
-    compFiles[file] += await fs.promises.readFile('06-build-page/components/' + file, 'utf-8', (data) => {})
+  for (let i = 0; i < rowsTemplate.length; i += 1) {
+    if (Array.isArray(rowsTemplate[i])) {
+      rowsTemplate = rowsTemplate.slice(0, i).concat(rowsTemplate[i], rowsTemplate.slice(i + 1));
+    }
   }
 
   for (let i = 0; i < rowsTemplate.length; i += 1) {
     if (rowsTemplate[i].includes('{{')) {
-      rowsTemplate[i] = compFiles[rowsTemplate[i].slice(rowsTemplate[i].indexOf('{') + 2, -3) + '.html'];
+      let file = rowsTemplate[i].slice(2,-2) + '.html';
+      rowsTemplate[i] = await fs.promises.readFile('06-build-page/components/' + file, 'utf-8', (data) => {});
     }
   }
 
@@ -76,4 +80,4 @@ async function func1() {
 
 }
 
-func1();
+completeIndex();
